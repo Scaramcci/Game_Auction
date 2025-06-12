@@ -1,0 +1,162 @@
+# Kyle拍卖模型强化学习实验配置文件
+
+# 环境配置
+environment:
+  n_auctions: 100            # 每个episode的拍卖轮数
+  n_traders: 10              # 噪音交易者数量
+  asset_true_value_mean: 100.0    # 资产真实价值均值
+  asset_true_value_std: 10.0      # 资产真实价值标准差
+  noise_std: 1.0             # 噪音交易标准差
+  initial_price: 100.0       # 初始价格
+  max_position: 10.0         # 最大持仓限制
+  transaction_cost: 0.01     # 交易成本
+
+# 训练配置
+training:
+  main_agent: 'insider'      # 主要训练的智能体类型
+  num_episodes: 5000         # 训练episode数量
+  max_steps_per_episode: 100 # 每个episode最大步数
+  eval_frequency: 100        # 评估频率
+  save_frequency: 500        # 模型保存频率
+  log_frequency: 50          # 日志记录频率
+  
+  # 早停配置
+  early_stopping:
+    enabled: true
+    patience: 500            # 容忍轮数
+    min_improvement: 0.01    # 最小改进阈值
+
+# 智能体配置
+agents:
+  insider:
+    id: 0                     # 智能体ID
+    type: "insider"           # 智能体类型
+    learning_rate: 0.001     # 学习率
+    batch_size: 32           # 批次大小
+    memory_size: 10000       # 经验回放缓冲区大小
+    epsilon: 1.0             # 探索率
+    epsilon_decay: 0.995     # 探索率衰减
+    epsilon_min: 0.01        # 最小探索率
+  
+  adaptive_insider:
+    id: 1                     # 智能体ID
+    type: "adaptive_insider"
+    learning_rate: 0.0005
+    batch_size: 32
+    memory_size: 15000
+    epsilon: 0.8             # 探索率
+    epsilon_decay: 0.998     # 探索率衰减
+    epsilon_min: 0.05       # 最小探索率
+  
+  market_maker:
+    id: 2                     # 智能体ID
+    type: "market_maker"
+    learning_rate: 0.01      # 学习率
+  
+  noise_trader:
+    id: 3                     # 智能体ID
+    type: "noise"
+    noise_std: 5.0           # 噪音标准差
+
+# 测试配置
+testing:
+  num_episodes: 200            # 测试episode数量
+  record_frequency: 10         # 详细记录频率
+  
+  # 策略比较
+  strategy_comparison:
+    enabled: true
+    strategies:
+      - "conservative"           # 保守策略
+      - "aggressive"            # 激进策略
+      - "adaptive"              # 自适应策略
+
+# 可视化配置
+visualization:
+  plot_frequency: 100          # 绘图频率
+  save_plots: true             # 是否保存图片
+  interactive_plots: true      # 是否生成交互式图表
+  
+  # 图表配置
+  figure_size: [12, 8]         # 图片大小
+  dpi: 300                     # 图片分辨率
+  style: "seaborn"             # 图表样式
+  
+  # 监控指标
+  metrics:
+    - "reward"                 # 奖励
+    - "profit"                 # 利润
+    - "position"               # 持仓
+    - "market_efficiency"      # 市场效率
+    - "volatility"             # 波动率
+    - "sharpe_ratio"           # 夏普比率
+
+# 日志配置
+logging:
+  level: "INFO"                # 日志级别
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+  file: "logs/experiment.log"  # 日志文件路径
+  
+# 结果保存配置
+results:
+  base_dir: "results"          # 结果基础目录
+  save_models: true            # 是否保存模型
+  save_data: true              # 是否保存数据
+  save_plots: true             # 是否保存图表
+  
+  # 数据格式
+  data_format: "json"          # 数据保存格式 (json/csv/pickle)
+  compression: false           # 是否压缩
+
+# 实验配置
+experiment:
+  name: "kyle_auction_rl"      # 实验名称
+  description: "Kyle拍卖模型强化学习实验"
+  version: "1.0"               # 版本号
+  
+  # 随机种子
+  random_seed: 42              # 随机种子
+  
+  # 并行配置
+  parallel:
+    enabled: false             # 是否启用并行
+    num_workers: 4             # 工作进程数
+  
+  # GPU配置
+  gpu:
+    enabled: true              # 是否使用GPU
+    device_id: 0               # GPU设备ID
+
+# 高级配置
+advanced:
+  # 课程学习
+  curriculum_learning:
+    enabled: false
+    stages:
+      - name: "basic"
+        episodes: 1000
+        difficulty: 0.5
+      - name: "intermediate"
+        episodes: 2000
+        difficulty: 0.75
+      - name: "advanced"
+        episodes: 2000
+        difficulty: 1.0
+  
+  # 多智能体训练
+  multi_agent:
+    enabled: false
+    self_play: true            # 自我对弈
+    population_size: 5         # 种群大小
+  
+  # 超参数优化
+  hyperparameter_optimization:
+    enabled: false
+    method: "optuna"           # 优化方法
+    n_trials: 100              # 试验次数
+    
+    # 搜索空间
+    search_space:
+      learning_rate: [0.0001, 0.01]
+      batch_size: [16, 128]
+      gamma: [0.9, 0.999]
