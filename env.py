@@ -57,13 +57,17 @@ class InsiderKyleEnv(gym.Env):
         self.current_price = prev_price + self.lambda_val * Q
         # 计算奖励 r_t = x * (v - p_t)
         reward = x * (self.v - self.current_price)
-        # 更新条件方差 (可选简单近似：按贝叶斯公式或固定衰减因子)
-        # 这里采用贝叶斯更新假设内幕策略线性，以估计方差减少
+        # 更新条件方差 (改进的贝叶斯更新机制)
+        # 使用更保守的方差更新，避免方差下降过快
         prior_var = self.current_var
-        # 计算协方差和方差用于更新
-        cov_v_Q = prior_var  # 假设x≈线性v使Cov(v,Q)≈Var(v)
-        var_Q = (cov_v_Q * self.lambda_val)**2 + self.sigma_u**2  # 近似 Var(Q) = (λVar(v))^2 + Var(u)
-        self.current_var = prior_var - (cov_v_Q**2) / var_Q
+        # 计算信息精度的增量，考虑订单流的信息含量
+        info_precision = (self.lambda_val**2) / (self.lambda_val**2 * prior_var + self.sigma_u**2)
+        # 使用衰减因子使方差更新更平滑
+        decay_factor = 0.1  # 控制学习速度
+        precision_update = decay_factor * info_precision
+        # 更新方差：1/new_var = 1/old_var + precision_update
+        new_precision = (1.0 / prior_var) + precision_update
+        self.current_var = 1.0 / new_precision
         # 准备下一个状态观测
         done = (self.current_step >= self.T)
         # 归一化当前轮次索引用于观测（如用总轮数归一化）

@@ -1,4 +1,8 @@
 import matplotlib.pyplot as plt
+import matplotlib
+# 设置中文字体支持
+matplotlib.rcParams['font.sans-serif'] = ['SimHei', 'Arial Unicode MS', 'DejaVu Sans']
+matplotlib.rcParams['axes.unicode_minus'] = False
 from stable_baselines3 import PPO
 from env import InsiderKyleEnv
 
@@ -6,7 +10,7 @@ from env import InsiderKyleEnv
 model = PPO.load("insider_policy")
 
 # 配置与训练时一致的环境参数
-env = InsiderKyleEnv(T=10, sigma_u=1.0, sigma_v=1.0, lambda_val=0.5, max_action=5.0)
+env = InsiderKyleEnv(T=10, sigma_u=0.8, sigma_v=1.2, lambda_val=0.3, max_action=3.0)
 
 # 运行若干次模拟来收集数据（这里以1次示例，可扩展为多次取平均）
 obs, _ = env.reset()
