@@ -4,12 +4,12 @@ import numpy as np
 from stable_baselines3 import PPO
 from env import EnhancedInsiderKyleEnv
 import os
+from font_config import setup_chinese_font
 
 # 设置中文字体支持
-matplotlib.rcParams['font.sans-serif'] = ['SimHei', 'Arial Unicode MS', 'DejaVu Sans']
-matplotlib.rcParams['axes.unicode_minus'] = False
+setup_chinese_font()
 
-def load_model_and_env(config_name, models_dir="Kyle_Model_V2/models"):
+def load_model_and_env(config_name, models_dir="./models"):
     """加载训练好的模型和对应环境配置"""
     model_path = os.path.join(models_dir, f"{config_name}_policy")
     
@@ -73,7 +73,7 @@ def run_single_episode(model, env, deterministic=True):
         'market_depth': env.get_market_depth()
     }
 
-def plot_basic_results(data, config_name, save_dir="Kyle_Model_V2/plots"):
+def plot_basic_results(data, config_name, save_dir="./plots"):
     """绘制基础结果图表"""
     os.makedirs(save_dir, exist_ok=True)
     
@@ -119,7 +119,7 @@ def plot_basic_results(data, config_name, save_dir="Kyle_Model_V2/plots"):
     plt.savefig(os.path.join(save_dir, f'{config_name}_profit_path.png'), dpi=300)
     plt.close()
 
-def plot_kyle_metrics(data, config_name, save_dir="Kyle_Model_V2/plots"):
+def plot_kyle_metrics(data, config_name, save_dir="./plots"):
     """绘制Kyle模型特有指标"""
     os.makedirs(save_dir, exist_ok=True)
     
@@ -163,7 +163,7 @@ def plot_kyle_metrics(data, config_name, save_dir="Kyle_Model_V2/plots"):
         plt.savefig(os.path.join(save_dir, f'{config_name}_market_depth.png'), dpi=300)
         plt.close()
 
-def visualize_config(config_name, models_dir="Kyle_Model_V2/models", save_dir="Kyle_Model_V2/plots"):
+def visualize_config(config_name, models_dir="./models", save_dir="./plots"):
     """可视化单个配置的结果"""
     print(f"\n正在可视化配置: {config_name}")
     
@@ -201,7 +201,7 @@ def main():
             all_data[config] = data
     
     print(f"\n可视化完成！共处理了 {len(all_data)} 个配置")
-    print("图表保存在 Kyle_Model_V2/plots/ 目录中")
+    print("图表保存在 ./plots/ 目录中")
     
     return all_data
 

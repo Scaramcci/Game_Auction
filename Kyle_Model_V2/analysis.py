@@ -8,12 +8,12 @@ from env import EnhancedInsiderKyleEnv
 import os
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import r2_score
+from font_config import setup_chinese_font
 
 # 设置中文字体支持
-matplotlib.rcParams['font.sans-serif'] = ['SimHei', 'Arial Unicode MS', 'DejaVu Sans']
-matplotlib.rcParams['axes.unicode_minus'] = False
+setup_chinese_font()
 
-def load_model_and_env(config_name, models_dir="Kyle_Model_V2/models"):
+def load_model_and_env(config_name, models_dir="./models"):
     """加载训练好的模型和对应环境配置"""
     model_path = os.path.join(models_dir, f"{config_name}_policy")
     
@@ -225,7 +225,7 @@ def generate_analysis_report(config_name, step_df, episode_df, env_params):
         'efficiency': efficiency
     }
 
-def plot_regression_analysis(step_df, config_name, save_dir="Kyle_Model_V2/analysis_plots"):
+def plot_regression_analysis(step_df, config_name, save_dir="./analysis_plots"):
     """绘制回归分析图"""
     os.makedirs(save_dir, exist_ok=True)
     
@@ -255,7 +255,7 @@ def plot_regression_analysis(step_df, config_name, save_dir="Kyle_Model_V2/analy
     plt.savefig(os.path.join(save_dir, f'{config_name}_price_impact_regression.png'), dpi=300)
     plt.close()
 
-def compare_configurations(all_results, save_dir="Kyle_Model_V2/analysis_plots"):
+def compare_configurations(all_results, save_dir="./analysis_plots"):
     """比较不同配置的结果"""
     os.makedirs(save_dir, exist_ok=True)
     
@@ -298,7 +298,7 @@ def compare_configurations(all_results, save_dir="Kyle_Model_V2/analysis_plots")
     plt.savefig(os.path.join(save_dir, 'configuration_comparison.png'), dpi=300)
     plt.close()
 
-def analyze_configuration(config_name, episodes=1000, models_dir="Kyle_Model_V2/models"):
+def analyze_configuration(config_name, episodes=1000, models_dir="./models"):
     """分析单个配置"""
     print(f"\n开始分析配置: {config_name}")
     
@@ -346,11 +346,11 @@ def main():
     # 生成配置比较图
     if len(all_results) > 1:
         compare_configurations(all_results)
-        print("\n配置比较图已生成: Kyle_Model_V2/analysis_plots/configuration_comparison.png")
+        print("\n配置比较图已生成: ./analysis_plots/configuration_comparison.png")
     
     print(f"\n=== 分析完成 ===")
     print(f"共分析了 {len(all_results)} 个配置")
-    print("详细结果已保存在 Kyle_Model_V2/analysis_plots/ 目录中")
+    print("详细结果已保存在 ./analysis_plots/ 目录中")
     
     return all_results
 

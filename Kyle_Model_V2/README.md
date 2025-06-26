@@ -173,7 +173,11 @@ def custom_metric(step_df):
 
 ### 常见问题
 
-1. **中文显示问题**: 确保安装了中文字体
+1. **中文显示问题**: 
+   - 项目已自动检测并配置中文字体
+   - 支持的字体: SimHei, Heiti TC, STHeiti, PingFang SC, Microsoft YaHei等
+   - 如果仍有问题，运行 `python font_config.py` 测试字体配置
+   - macOS用户通常使用Heiti TC，Windows用户使用SimHei
 2. **内存不足**: 减少analysis.py中的episodes数量
 3. **训练不收敛**: 调整learning_rate或增加total_timesteps
 4. **回归失败**: 检查数据中是否有足够的非零订单流

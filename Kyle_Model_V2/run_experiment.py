@@ -75,7 +75,7 @@ def run_analysis(quick_mode=False):
         if quick_mode:
             # 修改默认episodes
             original_analyze = analysis.analyze_configuration
-            def quick_analyze(config_name, episodes=200, models_dir="Kyle_Model_V2/models"):
+            def quick_analyze(config_name, episodes=200, models_dir="./models"):
                 return original_analyze(config_name, episodes, models_dir)
             analysis.analyze_configuration = quick_analyze
         
@@ -115,7 +115,7 @@ def check_dependencies():
 
 def create_directories():
     """创建必要的目录"""
-    dirs = ['Kyle_Model_V2/models', 'Kyle_Model_V2/plots', 'Kyle_Model_V2/analysis_plots']
+    dirs = ['./models', './plots', './analysis_plots']
     for dir_name in dirs:
         os.makedirs(dir_name, exist_ok=True)
         print(f"📁 创建目录: {dir_name}")
@@ -140,9 +140,9 @@ def print_summary(start_time, success_stages):
     if all(success_stages.values()):
         print("\n🎉 实验完全成功！")
         print("\n📂 输出文件位置:")
-        print("  - 训练模型: Kyle_Model_V2/models/")
-        print("  - 基础图表: Kyle_Model_V2/plots/")
-        print("  - 分析结果: Kyle_Model_V2/analysis_plots/")
+        print("  - 训练模型: ./models/")
+        print("  - 基础图表: ./plots/")
+        print("  - 分析结果: ./analysis_plots/")
         
         print("\n📊 主要结果文件:")
         print("  - configuration_comparison.png (配置比较)")

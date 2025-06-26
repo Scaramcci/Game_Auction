@@ -3,7 +3,7 @@ from stable_baselines3 import PPO
 from env import EnhancedInsiderKyleEnv
 import os
 
-def train_model(config_name, env_params, training_params, save_dir="Kyle_Model_V2/models"):
+def train_model(config_name, env_params, training_params, save_dir="./models"):
     """训练单个配置的模型"""
     print(f"\n开始训练配置: {config_name}")
     print(f"环境参数: {env_params}")
