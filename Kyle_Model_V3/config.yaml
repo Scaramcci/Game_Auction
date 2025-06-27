@@ -1,0 +1,102 @@
+# Kyle Model V3 训练配置文件
+# 所有训练参数都可以在这里调整
+
+# 基础训练参数
+training_params:
+  learning_rate: 0.0003
+  n_steps: 3072  # 增加以适应更长的episode
+  batch_size: 64
+  n_epochs: 10
+  total_timesteps: 300000  # 增加训练时间
+
+# 模型保存目录
+save_dir: "./models"
+
+# 环境配置
+configs:
+  # 配置1: 基础配置（静态λ）
+  baseline_static:
+    T: 10
+    sigma_u: 0.8
+    sigma_v: 1.2
+    lambda_val: 0.3
+    max_action: 3.0
+    seed: 42
+    dynamic_lambda: false
+    super_horizon: 1  # 单段信息
+    
+  # 配置2: 动态λ配置
+  baseline_dynamic:
+    T: 10
+    sigma_u: 0.8
+    sigma_v: 1.2
+    lambda_val: 0.3  # 初始值
+    max_action: 3.0
+    seed: 42
+    dynamic_lambda: true
+    super_horizon: 1  # 单段信息
+    
+  # 配置3: 高噪声环境
+  high_noise:
+    T: 10
+    sigma_u: 1.5  # 更高噪声
+    sigma_v: 1.2
+    lambda_val: 0.2  # 更低价格冲击
+    max_action: 3.0
+    seed: 42
+    dynamic_lambda: true
+    super_horizon: 1
+    
+  # 配置4: 低噪声环境
+  low_noise:
+    T: 10
+    sigma_u: 0.5  # 更低噪声
+    sigma_v: 1.2
+    lambda_val: 0.4  # 更高价格冲击
+    max_action: 3.0
+    seed: 42
+    dynamic_lambda: true
+    super_horizon: 1
+    
+  # 配置5: 长期交易
+  long_term:
+    T: 20  # 更多轮次
+    sigma_u: 0.8
+    sigma_v: 1.5  # 更高信息价值
+    lambda_val: 0.25
+    max_action: 2.5
+    seed: 42
+    dynamic_lambda: true
+    super_horizon: 1
+    
+  # 配置6: 多段信息（3段）
+  multi_segment_3:
+    T: 10
+    sigma_u: 0.8
+    sigma_v: 1.2
+    lambda_val: 0.3
+    max_action: 3.0
+    seed: 42
+    dynamic_lambda: true
+    super_horizon: 3  # 3段信息
+    
+  # 配置7: 多段信息（5段）
+  multi_segment_5:
+    T: 10
+    sigma_u: 0.8
+    sigma_v: 1.2
+    lambda_val: 0.3
+    max_action: 3.0
+    seed: 42
+    dynamic_lambda: true
+    super_horizon: 5  # 5段信息
+
+# 可选：指定要训练的配置（如果为空则训练所有配置）
+# selected_configs: ["baseline_static", "baseline_dynamic"]
+selected_configs: []
+
+# 训练选项
+options:
+  verbose: true  # 是否显示详细训练信息
+  save_models: true  # 是否保存训练好的模型
+  parallel_training: false  # 是否并行训练（暂未实现）

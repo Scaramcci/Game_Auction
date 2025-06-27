@@ -148,17 +148,17 @@ class EnhancedInsiderKyleEnv(gym.Env):
         # 判断是否结束外层epoch（整个episode）
         done_outer = done_inner and (self.outer_cnt + 1 >= self.super_horizon)
         
+        # 准备当前状态观测（使用当前段的真实价值）
+        time_index = self.t / float(self.T)
+        super_progress = (self.outer_cnt + 1) / float(self.super_horizon)
+        obs = np.array([time_index, self.current_price, self.v, super_progress], dtype=np.float32)
+        
         # 如果内层结束但外层未结束，切换到新的信息段
         if done_inner and not done_outer:
             # 保持价格连续性，重置内层状态
             self._reset_inner_state()
             # 外层计数增加
             self.outer_cnt += 1
-        
-        # 准备下一个状态观测
-        time_index = self.t / float(self.T)
-        super_progress = (self.outer_cnt + 1) / float(self.super_horizon)
-        obs = np.array([time_index, self.current_price, self.v, super_progress], dtype=np.float32)
         
         # info 字典包含调试信息
         info = {
