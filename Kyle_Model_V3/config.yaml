@@ -3,35 +3,35 @@
 
 # 基础训练参数
 training_params:
-  learning_rate: 0.0003
-  n_steps: 3072  # 增加以适应更长的episode
+  learning_rate: 0.00025           # 统一
+  n_steps: 4096                    # 覆写; 对 long_term/multi_segment_5 稍放大
   batch_size: 64
-  n_epochs: 10
-  total_timesteps: 300000  # 增加训练时间
+  n_epochs: 10                     # 大 batch 不需要太多 epoch
+  total_timesteps: 400000          # 曲线看稳了再停
 
 # 模型保存目录
 save_dir: "./models"
 
 # 环境配置
 configs:
-  # 配置1: 基础配置（静态λ）
+  # 配置1: 基础配置（静态λ）- 使用理论值
   baseline_static:
     T: 10
     sigma_u: 0.8
     sigma_v: 1.2
-    lambda_val: 0.3
-    max_action: 3.0
+    # lambda_val: 自动计算理论值
+    # max_action: 自动计算理论值
     seed: 42
     dynamic_lambda: false
     super_horizon: 1  # 单段信息
     
-  # 配置2: 动态λ配置
+  # 配置2: 动态λ配置 - 使用理论值
   baseline_dynamic:
     T: 10
     sigma_u: 0.8
     sigma_v: 1.2
-    lambda_val: 0.3  # 初始值
-    max_action: 3.0
+    # lambda_val: 自动计算理论值作为初始值
+    # max_action: 自动计算理论值
     seed: 42
     dynamic_lambda: true
     super_horizon: 1  # 单段信息
@@ -69,24 +69,24 @@ configs:
     dynamic_lambda: true
     super_horizon: 1
     
-  # 配置6: 多段信息（3段）
+  # 配置6: 多段信息（3段）- 使用理论值
   multi_segment_3:
     T: 10
     sigma_u: 0.8
     sigma_v: 1.2
-    lambda_val: 0.3
-    max_action: 3.0
+    # lambda_val: 自动计算理论值
+    # max_action: 自动计算理论值
     seed: 42
     dynamic_lambda: true
     super_horizon: 3  # 3段信息
     
-  # 配置7: 多段信息（5段）
+  # 配置7: 多段信息（5段）- 使用理论值
   multi_segment_5:
     T: 10
     sigma_u: 0.8
     sigma_v: 1.2
-    lambda_val: 0.3
-    max_action: 3.0
+    # lambda_val: 自动计算理论值
+    # max_action: 自动计算理论值
     seed: 42
     dynamic_lambda: true
     super_horizon: 5  # 5段信息

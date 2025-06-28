@@ -2,20 +2,30 @@ import gymnasium as gym
 import numpy as np
 
 class EnhancedInsiderKyleEnv(gym.Env):
-    def __init__(self, T=10, sigma_u=0.8, sigma_v=1.2, lambda_val=0.3, max_action=3.0, 
+    def __init__(self, T=10, sigma_u=0.8, sigma_v=1.2, lambda_val=None, max_action=None, 
                  seed=None, dynamic_lambda=True, super_horizon=1):
         super().__init__()
         # 模型参数
         self.T = T                      # 内层轮数（单段信息的交易轮数）
         self.sigma_u = sigma_u          # 噪声交易的标准差
         self.sigma_v = sigma_v          # 真值先验标准差
-        self.lambda_val = lambda_val    # 初始价格冲击系数（仅在dynamic_lambda=False时使用）
-        self.max_action = max_action    # 动作空间上下限
         self.dynamic_lambda = dynamic_lambda  # 是否使用动态λ
         self.super_horizon = super_horizon    # 外层epoch数量（多少段信息）
         
+        # ★ 若用户没写 λ 或动作上限→按理论值自动推
+        if lambda_val is None:
+            beta_1 = sigma_u / sigma_v * np.sqrt(self.T / (self.T + 1))
+            lambda_val = 1.0 / (2.0 * beta_1)
+        self.lambda_val = lambda_val    # 初始价格冲击系数（仅在dynamic_lambda=False时使用）
+        
+        if max_action is None:
+            beta_1 = sigma_u / sigma_v * np.sqrt(self.T / (self.T + 1))
+            self.max_action = 2.0 * beta_1 * sigma_v  # ≈ 2β₁σ_v
+        else:
+            self.max_action = max_action    # 动作空间上下限
+        
         # 定义动作与观察空间
-        self.action_space = gym.spaces.Box(low=-max_action, high=max_action, shape=(1,), dtype=np.float32)
+        self.action_space = gym.spaces.Box(low=-self.max_action, high=self.max_action, shape=(1,), dtype=np.float32)
         # 观察包括: [规范化时间索引, 当前价格p_{t-1}, 真值v, 外层epoch进度]
         obs_low = np.array([0.0, -np.inf, -np.inf, 0.0], dtype=np.float32)
         obs_high = np.array([1.0, np.inf, np.inf, 1.0], dtype=np.float32)
@@ -53,14 +63,21 @@ class EnhancedInsiderKyleEnv(gym.Env):
     
     def _reset_inner_state(self):
         """重置内层状态（新的信息段）"""
-        # 生成新的真实价值
+        # 生成新的真实价值（每段独立）
         new_v = self.np_random.normal(loc=0.0, scale=self.sigma_v)
         self.v = new_v
         self.value_hist.append(new_v)
         
+        # 价格保持连续，不在段切换时调整
+        # 这符合Kyle模型理论：价格通过交易逐步发现价值
+        
         # 重置内层计数和方差
         self.t = 0
-        self.cur_var = self.sigma_v**2
+        self.cur_var = self.sigma_v**2      # 方差重新拉满
+        
+        # ★ 重新计算理论 β₁、λ₁ 作为段首种子
+        beta_1 = self.sigma_u / np.sqrt(self.cur_var) * np.sqrt(self.T / (self.T + 1))
+        self.lambda_t = 1.0 / (2.0 * beta_1)
         
         # 记录段边界
         if len(self.segment_boundaries) == 0:
